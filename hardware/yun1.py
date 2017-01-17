@@ -1,6 +1,5 @@
 import json
 import string
-import time
 
 class Yun1():
     _name = "arduino-yun1"
@@ -14,17 +13,23 @@ class Yun1():
 
     # Internal State
     _local_state = {
+        "t": "",
         "relays": [False, False, False, False, False, False, False, False]
     }
 
     # Serialization
     def serialize_state(self, state):
         return {
-            "relays": string.join([ "1" if v else "0" for v in state["relays"]], "")
+            "t": state["t"],
+            "relays": string.join([ "1" if v else "0" for v in state["relays"]], ""),
         }
 
     def deserialize_state(self, serialized):
         state = {}
+
+        if "t" in serialized:
+            state["t"] = serialized["t"]
+
         if "relays" in serialized:
             state["relays"] = []
             for v in serialized["relays"]:
@@ -41,7 +46,5 @@ class Yun1():
                 json.dumps(self.get_local_state()))
 
     def handle_sync(self, msg_json):
-        self._last_update = time.time()
         self._local_state = self.deserialize_state(msg_json)
-
         self.send_status_update()
