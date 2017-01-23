@@ -1,15 +1,7 @@
-import json
-import string
+from .hardware import Hardware
 
-class Yun1():
+class Yun1(Hardware):
     _name = "arduino-yun1"
-    _client = None
-
-    def __init__(self, client):
-        self._client = client
-
-    def get_topic(self):
-        return "remote/" + self._name
 
     # Internal State
     _local_state = {
@@ -21,7 +13,7 @@ class Yun1():
     def serialize_state(self, state):
         return {
             "t": state["t"],
-            "relays": string.join([ "1" if v else "0" for v in state["relays"]], ""),
+            "relays": "".join([ "1" if v else "0" for v in state["relays"]])
         }
 
     def deserialize_state(self, serialized):
@@ -37,14 +29,3 @@ class Yun1():
 
         return state
 
-    def get_local_state(self):
-        return self.serialize_state(self._local_state)
-
-    # Communication
-    def send_status_update(self):
-        self._client.publish(self.get_topic(),
-                json.dumps(self.get_local_state()))
-
-    def handle_sync(self, msg_json):
-        self._local_state = self.deserialize_state(msg_json)
-        self.send_status_update()

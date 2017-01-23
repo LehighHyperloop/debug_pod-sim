@@ -12,7 +12,8 @@ client.loop_start()
 
 import hardware
 hw_map = {
-    "yun1": hardware.Yun1(client)
+    "yun1": hardware.Yun1(client),
+    "yun3": hardware.Yun3(client)
 }
 
 topic_to_handler = {}
@@ -35,6 +36,7 @@ client.on_message = on_message
 try:
     while True:
         for name,hw in hw_map.iteritems():
+            hw.update()
             print name + "(" + \
                 string.join([ k + ": " + str(v) for k, v in hw.get_local_state().iteritems() ], ", ") + \
                 ")"
