@@ -21,3 +21,7 @@ class Yun3(Hardware):
             "z": random.random() * 0.2,
         }
         self._client.publish("sensor/center/accel", json.dumps(self._local_state))
+        self._client.publish("sensor/all/pressure", json.dumps({
+            "levitation": random.random() * 5 + 125,
+            "pneumatics": random.random() * 5 + 180
+        }))
